@@ -15,20 +15,23 @@ exports.getMovieById = async (req, res) => {
 
 // POST /api/movies
 exports.createMovie = async (req, res) => {
-  const { title, genre, description } = req.body;
-  const movie = new Movie({ title, genre, description });
+  const { title, genre, description, releaseYear, image } = req.body;
+  const movie = new Movie({ title, genre, description, releaseYear, image });
   await movie.save();
   res.status(201).json(movie);
 };
 
 // PUT /api/movies/:id
 exports.updateMovie = async (req, res) => {
-  const { title, genre, description } = req.body;
-  const movie = await Movie.findByIdAndUpdate(
-    req.params.id,
-    { title, genre, description },
-    { new: true }
-  );
+  const { title, genre, description, releaseYear, image } = req.body;
+
+  const movie = new Movie({
+    title,
+    genre,
+    description,
+    releaseYear,
+    image
+  });
   if (!movie) return res.status(404).json({ message: 'Movie not found' });
   res.json(movie);
 };

@@ -17,10 +17,10 @@ const movieSchema = new mongoose.Schema({
     type: Number,
     default: new Date().getFullYear()
   },
-  posterUrl: {
-    type: String,
-    default: ''
-  }
+    image: {
+    type: String, // np. URL do obrazka
+    required: false,
+  },
 }, {
   timestamps: true
 });

@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes');
@@ -8,6 +9,8 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const protect = require('./middleware/auth');
 
 const app = express();  // <-- tutaj tworzysz instancję Express
+
+app.use(cors());
 
 // Middleware do parsowania JSON w body requestów
 app.use(express.json());
