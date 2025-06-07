@@ -42,6 +42,10 @@ exports.deleteReview = async (req, res) => {
 
 // GET /api/reviews/movie/:movieId
 exports.getReviewsByMovie = async (req, res) => {
-  const reviews = await Review.find({ movie: req.params.movieId }).populate('user', 'email');
-  res.json(reviews);
+  try {
+    const reviews = await Review.find({ movie: req.params.movieId }).populate('user', 'email');
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

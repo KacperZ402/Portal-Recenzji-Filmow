@@ -23,18 +23,26 @@ exports.createMovie = async (req, res) => {
 
 // PUT /api/movies/:id
 exports.updateMovie = async (req, res) => {
-  const { title, genre, description, releaseYear, image } = req.body;
+  try {
+    const movie = await Movie.findById(req.params.id);
+    if (!movie) return res.status(404).json({ message: 'Movie not found' });
 
-  const movie = new Movie({
-    title,
-    genre,
-    description,
-    releaseYear,
-    image
-  });
-  if (!movie) return res.status(404).json({ message: 'Movie not found' });
-  res.json(movie);
+    // Aktualizuj tylko przesłane pola
+    const fields = ['title', 'genre', 'description', 'image', 'releaseYear'];
+    fields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        movie[field] = req.body[field];
+      }
+    });
+
+    await movie.save(); // to powinno wywołać updatedAt
+
+    res.json(movie);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
+
 
 // DELETE /api/movies/:id
 exports.deleteMovie = async (req, res) => {
