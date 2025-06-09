@@ -40,6 +40,7 @@ exports.deleteReview = async (req, res) => {
   res.json({ message: 'Review deleted' });
 };
 
+
 // GET /api/reviews/movie/:movieId
 exports.getReviewsByMovie = async (req, res) => {
   try {

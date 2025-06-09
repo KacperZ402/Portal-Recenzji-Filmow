@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { protect, isAdmin } = require('../middleware/auth');
-
 const {
   getMovies,
   getMovieById,
@@ -14,24 +13,11 @@ const {
 router.get('/', getMovies);
 router.get('/:id', getMovieById);
 
-// Chronione
+// Dodawanie – tylko zalogowany użytkownik
 router.post('/', protect, createMovie);
-router.put('/:id', protect, updateMovie);
-router.delete('/:id', protect, deleteMovie);
-router.put('/:id', protect, isAdmin, updateMovie);
 
-router.post('/', protect, async (req, res) => {
-  try {
-    const movie = new Movie(req.body);
-    await movie.save();
-    res.status(201).json(movie);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-router.delete('/:id', protect, isAdmin, async (req, res) => {
-  await Movie.findByIdAndDelete(req.params.id);
-  res.status(200).json({ message: 'Film usunięty' });
-});
+// Edytowanie i usuwanie – tylko admin
+router.put('/:id', protect, isAdmin, updateMovie);
+router.delete('/:id', protect, isAdmin, deleteMovie);
 
 module.exports = router;

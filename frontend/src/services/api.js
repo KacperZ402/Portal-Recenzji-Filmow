@@ -18,7 +18,7 @@ export const createMovie = (data, token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 export const updateMovie = (id, data, token) => {
-  return axios.put(`/api/movies/${id}`, data, {
+  return API.put(`/movies/${id}`, data, {
     headers: { Authorization: `Bearer ${token}` }
   });
 };
@@ -28,7 +28,7 @@ export const deleteMovie = (movieId, token) =>
   });
 
 export const deleteOwnReview = (reviewId, token) => {
-  return axios.delete(`/api/reviews/${reviewId}`, {
+  return API.delete(`/reviews/${reviewId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -36,7 +36,7 @@ export const deleteOwnReview = (reviewId, token) => {
 };
 
 export const deleteReviewAsAdmin = (reviewId, token) => {
-  return axios.delete(`/api/reviews/admin/${reviewId}`, {
+  return API.delete(`/reviews/admin/${reviewId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

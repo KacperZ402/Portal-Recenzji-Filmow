@@ -33,5 +33,4 @@ router.delete('/admin/:id', protect, isAdmin, async (req, res) => {
     res.status(500).json({ message: 'Błąd serwera' });
   }
 });
-
 module.exports = router;

@@ -1,6 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getMovieDetails, updateMovie } from '../services/api';
+import {
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  Typography,
+  Select,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
+
+const genres = [
+  'Akcja',
+  'Komedia',
+  'Dramat',
+  'Horror',
+  'Romans',
+  'Sci-Fi',
+  'Fantasy',
+  'Thriller',
+  'Animacja',
+  'Dokumentalny',
+  'Przygodowy',
+  'Musical',
+  'Familijny',
+  'Wojenny',
+  'Kryminalny',
+];
 
 const EditMovie = () => {
   const { id } = useParams();
@@ -43,33 +71,89 @@ const EditMovie = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: 'auto' }}>
-      <h2>Edytuj film</h2>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        maxWidth: 600,
+        mx: 'auto',
+        mt: 4,
+        p: 3,
+        border: '1px solid #ccc',
+        borderRadius: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <Typography variant="h5" textAlign="center" mb={2}>
+        Edytuj film
+      </Typography>
 
-      <label>Tytuł:</label>
-      <input value={title} onChange={(e) => setTitle(e.target.value)} required />
+      <TextField
+        label="Tytuł"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+        fullWidth
+      />
 
-      <label>Gatunek:</label>
-      <input value={genre} onChange={(e) => setGenre(e.target.value)} required />
+      <FormControl fullWidth required>
+        <InputLabel id="genre-label">Gatunek</InputLabel>
+        <Select
+          labelId="genre-label"
+          value={genre}
+          label="Gatunek"
+          onChange={(e) => setGenre(e.target.value)}
+        >
+          <MenuItem value="" disabled>
+            Wybierz gatunek
+          </MenuItem>
+          {genres.map((g) => (
+            <MenuItem key={g} value={g}>
+              {g}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-      <label>Opis:</label>
-      <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+      <TextField
+        label="Opis"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        multiline
+        rows={4}
+        required
+        fullWidth
+      />
 
-      <label>Link do zdjęcia:</label>
-      <input value={image} onChange={(e) => setImage(e.target.value)} />
+      <TextField
+        label="Link do zdjęcia"
+        value={image}
+        onChange={(e) => setImage(e.target.value)}
+        type="url"
+        fullWidth
+      />
 
-      <label>Rok produkcji:</label>
-      <input
+      <TextField
+        label="Rok produkcji"
         type="number"
         value={releaseYear}
         onChange={(e) => setReleaseYear(Number(e.target.value))}
-        min="1888"
-        max={new Date().getFullYear()}
+        inputProps={{
+          min: 1888,
+          max: new Date().getFullYear(),
+        }}
         required
+        fullWidth
       />
 
-      <button type="submit">Zapisz zmiany</button>
-    </form>
+      <Button type="submit" variant="contained" color="primary" fullWidth>
+        Zapisz zmiany
+      </Button>
+    </Box>
   );
 };
 

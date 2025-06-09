@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
 import { createMovie } from '../services/api';
+import {
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  Typography,
+  Select,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 
 const genres = [
   'Akcja',
@@ -15,6 +25,8 @@ const genres = [
   'Przygodowy',
   'Musical',
   'Familijny',
+  'Wojenny',
+  'Kryminalny',
 ];
 
 const AddMovie = ({ userToken }) => {
@@ -23,86 +35,111 @@ const AddMovie = ({ userToken }) => {
   const [image, setImage] = useState('');
   const [genre, setGenre] = useState('');
   const [releaseYear, setReleaseYear] = useState(new Date().getFullYear());
+
+  if (!localStorage.getItem('token')) {
+    return null; // nic nie pokazuj, jeśli brak tokena
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       await createMovie(
-        { title, description, genre, image, releaseYear},
+        { title, description, genre, image, releaseYear },
         userToken
       );
       alert('Film dodany pomyślnie!');
-      // Możesz też wyczyścić pola formularza lub przekierować gdzieś
     } catch (error) {
       console.error(error);
       alert('Błąd podczas dodawania filmu');
     }
   };
-  if (!localStorage.getItem('token')) {
-    return null; // nic nie pokazuj
-  }
+
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: 'auto' }}>
-      <div>
-        <label>Tytuł:</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          style={{ width: '100%', marginBottom: '10px' }}
-        />
-      </div>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        maxWidth: 500,
+        mx: 'auto',
+        mt: 4,
+        p: 3,
+        border: '1px solid #ccc',
+        borderRadius: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}
+      noValidate
+      autoComplete="off"
+    >
+      <Typography variant="h5" textAlign="center" mb={2}>
+        Dodaj film
+      </Typography>
 
-      <div>
-        <label>Opis:</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          rows={4}
-          style={{ width: '100%', marginBottom: '10px' }}
-        />
-      </div>
-      <div>
-        <label>Rok wydania:</label>
-        <input
-          type="number"
-          value={releaseYear}
-          onChange={(e) => setReleaseYear(e.target.value)}
-          min="1900"
-          max={new Date().getFullYear()}
-          style={{ width: '100%', marginBottom: '10px' }}
-        />
-      </div>
-      <div>
-        <label>Gatunek:</label>
-        <select
+      <TextField
+        label="Tytuł"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+        fullWidth
+      />
+
+      <TextField
+        label="Opis"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        multiline
+        rows={4}
+        required
+        fullWidth
+      />
+
+      <TextField
+        label="Rok wydania"
+        type="number"
+        value={releaseYear}
+        onChange={(e) => setReleaseYear(e.target.value)}
+        inputProps={{
+          min: 1900,
+          max: new Date().getFullYear(),
+        }}
+        required
+        fullWidth
+      />
+
+      <FormControl fullWidth required>
+        <InputLabel id="genre-label">Gatunek</InputLabel>
+        <Select
+          labelId="genre-label"
           value={genre}
+          label="Gatunek"
           onChange={(e) => setGenre(e.target.value)}
-          required
-          style={{ width: '100%', marginBottom: '10px' }}
         >
-          <option value="" disabled>Wybierz gatunek</option>
+          <MenuItem value="" disabled>
+            Wybierz gatunek
+          </MenuItem>
           {genres.map((g) => (
-            <option key={g} value={g}>{g}</option>
+            <MenuItem key={g} value={g}>
+              {g}
+            </MenuItem>
           ))}
-        </select>
-      </div>
+        </Select>
+      </FormControl>
 
-      <div>
-        <label>Link do zdjęcia:</label>
-        <input
-          type="url"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          placeholder="https://example.com/film.jpg"
-          style={{ width: '100%', marginBottom: '10px' }}
-        />
-      </div>
+      <TextField
+        label="Link do zdjęcia"
+        type="url"
+        value={image}
+        onChange={(e) => setImage(e.target.value)}
+        placeholder="https://example.com/film.jpg"
+        fullWidth
+      />
 
-      <button type="submit">Dodaj film</button>
-    </form>
+      <Button type="submit" variant="contained" color="primary" fullWidth>
+        Dodaj film
+      </Button>
+    </Box>
   );
 };
 

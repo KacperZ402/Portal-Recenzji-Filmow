@@ -1,17 +1,69 @@
+const mongoose = require('mongoose');
 const Movie = require('../models/Movie');
-
+// GET /api/movies
 // GET /api/movies
 exports.getMovies = async (req, res) => {
-  const movies = await Movie.find();
+  const movies = await Movie.aggregate([
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'movie',
+        as: 'reviews'
+      }
+    },
+    {
+      $addFields: {
+        averageRating: {
+          $cond: [
+            { $gt: [{ $size: '$reviews' }, 0] },
+            { $avg: '$reviews.rating' },
+            null
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        reviews: 0
+      }
+    }
+  ]);
   res.json(movies);
 };
 
+
 // GET /api/movies/:id
 exports.getMovieById = async (req, res) => {
-  const movie = await Movie.findById(req.params.id);
-  if (!movie) return res.status(404).json({ message: 'Movie not found' });
-  res.json(movie);
+  const movie = await Movie.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(req.params.id) } },
+    {
+      $lookup: {
+        from: 'reviews',
+        localField: '_id',
+        foreignField: 'movie',
+        as: 'reviews'
+      }
+    },
+    {
+      $addFields: {
+        averageRating: {
+          $cond: [
+            { $gt: [{ $size: '$reviews' }, 0] },
+            { $avg: '$reviews.rating' },
+            null
+          ]
+        }
+      }
+    },
+    { $project: { reviews: 0 } }
+  ]);
+
+  if (!movie || movie.length === 0) return res.status(404).json({ message: 'Movie not found' });
+
+  res.json(movie[0]);
 };
+
 
 // POST /api/movies
 exports.createMovie = async (req, res) => {
@@ -50,3 +102,4 @@ exports.deleteMovie = async (req, res) => {
   if (!movie) return res.status(404).json({ message: 'Movie not found' });
   res.json({ message: 'Movie deleted' });
 };
+
