@@ -4,8 +4,7 @@ const Navbar = ({ user }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.clear();
     navigate('/login');
     window.location.reload(); // odświeżenie aplikacji po wylogowaniu
   };
